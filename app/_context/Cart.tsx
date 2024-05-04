@@ -23,6 +23,7 @@ interface ICartContext {
   subTotalPrice: number;
   totalPrice: number;
   totalDiscounts: number;
+  totalQuantity: number;
   // eslint-disable-next-line no-unused-vars
   addProductToCart: ({
     product,
@@ -54,6 +55,7 @@ export const CartContext = createContext<ICartContext>({
   subTotalPrice: 0,
   totalPrice: 0,
   totalDiscounts: 0,
+  totalQuantity: 0,
   addProductToCart: () => {},
   decreaseProductQuantity: () => {},
   increaseProductQuantity: () => {},
@@ -163,6 +165,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const totalQuantity = useMemo(() => {
+    return products.reduce((acc, product) => {
+      return acc + product.quantity;
+    }, 0);
+  }, [products]);
+
   return (
     <CartContext.Provider
       value={{
@@ -170,6 +178,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         subTotalPrice,
         totalPrice,
         totalDiscounts,
+        totalQuantity,
         addProductToCart,
         decreaseProductQuantity,
         increaseProductQuantity,
