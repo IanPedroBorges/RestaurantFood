@@ -74,7 +74,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       return products.reduce((acc, product) => {
         return acc + calculateProductTotalPrice(product) * product.quantity;
       }, 0);
-    }, [products]) - Number(products?.[0]?.restaurant?.deliveryFee);
+    }, [products]) + Number(products?.[0]?.restaurant?.deliveryFee);
 
   const totalDiscounts = subTotalPrice - totalPrice;
 
