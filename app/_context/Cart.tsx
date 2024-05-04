@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use client";
 
 import { Prisma } from "@prisma/client";
@@ -68,11 +69,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }, 0);
   }, [products]);
 
-  const totalPrice = useMemo(() => {
-    return products.reduce((acc, product) => {
-      return acc + calculateProductTotalPrice(product) * product.quantity;
-    }, 0);
-  }, [products]);
+  const totalPrice =
+    useMemo(() => {
+      return products.reduce((acc, product) => {
+        return acc + calculateProductTotalPrice(product) * product.quantity;
+      }, 0);
+    }, [products]) - Number(products?.[0]?.restaurant?.deliveryFee);
 
   const totalDiscounts = subTotalPrice - totalPrice;
 
