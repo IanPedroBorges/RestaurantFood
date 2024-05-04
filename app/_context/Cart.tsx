@@ -23,8 +23,11 @@ interface ICartContext {
   totalPrice: number;
   totalDiscounts: number;
   // eslint-disable-next-line no-unused-vars
-  addProductToCart: (
-    // eslint-disable-next-line no-unused-vars
+  addProductToCart: ({
+    product,
+    quantity,
+    emptyCart,
+  }: {
     product: Prisma.ProductGetPayload<{
       include: {
         restaurant: {
@@ -33,10 +36,10 @@ interface ICartContext {
           };
         };
       };
-    }>,
-    // eslint-disable-next-line no-unused-vars
-    quantity: number,
-  ) => void;
+    }>;
+    quantity: number;
+    emptyCart?: boolean;
+  }) => void;
   // eslint-disable-next-line no-unused-vars
   decreaseProductQuantity: (productId: string) => void;
   // eslint-disable-next-line no-unused-vars
@@ -73,7 +76,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const totalDiscounts = subTotalPrice - totalPrice;
 
-  const addProductToCart = (
+  const addProductToCart = ({
+    product,
+    quantity,
+    emptyCart,
+  }: {
     product: Prisma.ProductGetPayload<{
       include: {
         restaurant: {
@@ -82,9 +89,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           };
         };
       };
-    }>,
-    quantity: number,
-  ) => {
+    }>;
+    quantity: number;
+    emptyCart?: boolean;
+  }) => {
+    if (emptyCart) {
+      setProducts([]);
+    }
     const isProductAlreadyOnCart = products.some(
       (cartProduct) => cartProduct.id === product.id,
     );
