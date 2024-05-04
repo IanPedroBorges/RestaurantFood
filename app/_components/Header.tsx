@@ -14,7 +14,7 @@ const Header = () => {
           src="/logo.png"
           alt="FSW Foods"
           fill
-          className="object-cover"
+          className="cursor-pointer object-cover"
           onClick={() => router.push("/")}
         />
       </div>
