@@ -10,14 +10,15 @@ import { OrderStatus } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import {
+  AlertDialogHeader,
+  AlertDialogFooter,
   AlertDialog,
   AlertDialogContent,
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@radix-ui/react-alert-dialog";
-import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
+} from "./ui/alert-dialog";
 
 const Cart = () => {
   const { data } = useSession();
@@ -33,8 +34,8 @@ const Cart = () => {
     try {
       setIsSubmitLoading(true);
       await createOrder({
-        subTotalPrice,
-        totalDiscount: totalDiscounts,
+        subtotalPrice: subTotalPrice,
+        totalDiscounts: totalDiscounts,
         totalPrice,
         deliveryFee: restaurant.deliveryFee,
         deliveryTimeMinutes: restaurant.deliveryTimeMinutesMinutes,
@@ -47,6 +48,14 @@ const Cart = () => {
         user: {
           connect: {
             id: data.user.id,
+          },
+        },
+        products: {
+          createMany: {
+            data: products.map((product) => ({
+              productId: product.id,
+              quantity: product.quantity,
+            })),
           },
         },
       });
@@ -125,13 +134,11 @@ const Cart = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isConfirmDialogOpen}>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleFinishOrderClick}>
               {isSubmitLoading && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={handleFinishOrderClick}>
               Finalizar
             </AlertDialogAction>
           </AlertDialogFooter>
