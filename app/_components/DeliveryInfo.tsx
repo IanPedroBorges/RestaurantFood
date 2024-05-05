@@ -4,7 +4,7 @@ import { Card } from "./ui/card";
 import { Restaurant } from "@prisma/client";
 
 interface DeliveryInfoProps {
-  restaurant: Pick<Restaurant, "deliveryFee" | "deliveryTimeMinutes">;
+  restaurant: Pick<Restaurant, "deliveryFee" | "deliveryTimeMinutesMinutes">;
 }
 
 const DeliveryInfo = ({ restaurant }: DeliveryInfoProps) => {
@@ -31,7 +31,7 @@ const DeliveryInfo = ({ restaurant }: DeliveryInfoProps) => {
           </div>
 
           <p className="text-xs font-semibold">
-            {restaurant.deliveryTimeMinutes} min
+            {restaurant.deliveryTimeMinutesMinutes} min
           </p>
         </div>
       </Card>
