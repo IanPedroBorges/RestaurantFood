@@ -10,45 +10,53 @@ import { OrderStatus } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import {
-  AlertDialogHeader,
-  AlertDialogFooter,
   AlertDialog,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
   AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
-const Cart = () => {
-  const { data } = useSession();
+interface CartProps {
+  // eslint-disable-next-line no-unused-vars
+  setIsOpen: (isOpen: boolean) => void;
+}
+
+const Cart = ({ setIsOpen }: CartProps) => {
+  const router = useRouter();
+
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
-  const [isConfirmDialogOpen, setIsConfirmDialoOpen] = useState(false);
-  const { products, subTotalPrice, totalDiscounts, totalPrice, clearCart } =
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+
+  const { data } = useSession();
+
+  const { products, subTotalPrice, totalPrice, totalDiscounts, clearCart } =
     useContext(CartContext);
 
   const handleFinishOrderClick = async () => {
     if (!data?.user) return;
 
-    const restaurant = products?.[0].restaurant;
+    const restaurant = products[0].restaurant;
+
     try {
       setIsSubmitLoading(true);
+
       await createOrder({
         subtotalPrice: subTotalPrice,
-        totalDiscounts: totalDiscounts,
+        totalDiscounts,
         totalPrice,
         deliveryFee: restaurant.deliveryFee,
         deliveryTimeMinutes: restaurant.deliveryTimeMinutesMinutes,
         restaurant: {
-          connect: {
-            id: restaurant.id,
-          },
+          connect: { id: restaurant.id },
         },
         status: OrderStatus.CONFIRMED,
         user: {
-          connect: {
-            id: data.user.id,
-          },
+          connect: { id: data.user.id },
         },
         products: {
           createMany: {
@@ -59,7 +67,10 @@ const Cart = () => {
           },
         },
       });
+
       clearCart();
+      setIsOpen(false);
+      router.push("/");
     } catch (error) {
       console.error(error);
     } finally {
@@ -77,6 +88,8 @@ const Cart = () => {
                 <CartItem key={product.id} cartProduct={product} />
               ))}
             </div>
+
+            {/* TOTAIS */}
             <div className="mt-6">
               <Card>
                 <CardContent className="space-y-2 p-5">
@@ -84,9 +97,19 @@ const Cart = () => {
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>{formatCurrency(subTotalPrice)}</span>
                   </div>
+
                   <Separator />
+
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Descontos</span>
+                    <span>- {formatCurrency(totalDiscounts)}</span>
+                  </div>
+
+                  <Separator className="h-[0.5px]" />
+
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">Entrega</span>
+
                     {Number(products?.[0].restaurant.deliveryFee) === 0 ? (
                       <span className="uppercase text-primary">Grátis</span>
                     ) : (
@@ -95,35 +118,34 @@ const Cart = () => {
                       )
                     )}
                   </div>
+
                   <Separator />
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Descontos</span>
-                    <span> - {formatCurrency(totalDiscounts)}</span>
-                  </div>
-                  <Separator />
+
                   <div className="flex items-center justify-between text-xs font-semibold">
                     <span>Total</span>
                     <span>{formatCurrency(totalPrice)}</span>
                   </div>
-                  <Separator />
                 </CardContent>
               </Card>
             </div>
+
+            {/* FINALIZAR PEDIDO */}
             <Button
               className="mt-6 w-full"
-              onClick={() => setIsConfirmDialoOpen(true)}
+              onClick={() => setIsConfirmDialogOpen(true)}
               disabled={isSubmitLoading}
             >
-              Finalizar Pedido
+              Finalizar pedido
             </Button>
           </>
         ) : (
-          <h2 className="text-left font-medium">Sua sacola está vazia</h2>
+          <h2 className="text-left font-medium">Sua sacola está vazia.</h2>
         )}
       </div>
+
       <AlertDialog
         open={isConfirmDialogOpen}
-        onOpenChange={setIsConfirmDialoOpen}
+        onOpenChange={setIsConfirmDialogOpen}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -135,7 +157,10 @@ const Cart = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleFinishOrderClick}>
+            <AlertDialogAction
+              onClick={handleFinishOrderClick}
+              disabled={isSubmitLoading}
+            >
               {isSubmitLoading && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
