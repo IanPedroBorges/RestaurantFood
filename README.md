@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<h1 align="center">
+    <img src="./public/logo.png" alt="Logo do Projeto" />
+    <p>Descrição Curta do Projeto</p>
+    Acesse o site: <a href='https://restaurant-food-rho.vercel.app/' target='_blank' >FSW food</a>
+</h1>
 
-## Getting Started
+<img src="./public/imagemMergeada.jpeg" alt="Imagem Mergeada"/>
 
-First, run the development server:
+## Sobre
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+O **FSW Food** é uma plataforma semelhante ao iFood, que permite aos usuários fazer pedidos de comida de diversos restaurantes, navegar por diferentes categorias de alimentos e aproveitar promoções exclusivas.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tecnologias Usadas
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [React](https://react.dev/)
+- [Node.js](https://nodejs.org/en)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Prisma](https://www.prisma.io/)
+- [Shadcn](https://ui.shadcn.com/)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Como Contribuir
 
-## Learn More
+```bash 
+# Clone o Projeto
+$ git clone git@github.com:IanPedroBorges/RestaurantFood.git
+$ cd RestaurantFood
 
-To learn more about Next.js, take a look at the following resources:
+# Crie um arquivo chamado docker-compose.yml e cole as informações abaixo
+$ touch docker-compose.yml
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#docker-compose.yml
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+version: "3"
 
-## Deploy on Vercel
+services:
+  postgres:
+    image: postgres:latest
+    container_name: fsw-foods-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.postgres-data:/var/lib/postgresql/data
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+volumes:
+  .postgres-data:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Instale as dependências
+$ npm install
+
+# Rode o projeto localmente
+$ npm run dev
