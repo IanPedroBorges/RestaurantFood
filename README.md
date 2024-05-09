@@ -12,7 +12,7 @@ O **FSW Food** é uma plataforma semelhante ao iFood, que permite aos usuários 
 
 ## Tecnologias Usadas
 
-- [React](https://react.dev/)
+- [Next](https://nextjs.org/)
 - [Node.js](https://nodejs.org/en)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Prisma](https://www.prisma.io/)
